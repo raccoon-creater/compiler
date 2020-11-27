@@ -59,7 +59,7 @@ bool consume(char *op) {
 void expect(char *op) {
   if (token->kind != TK_RESERVED || strlen(op) != token->len ||
       memcmp(token->str, op, token->len))
-    error_at(token->str,"expected \"%s\"",op);
+    error_at(token->str, "expected \"%s\"", op);
   token = token->next;
 }
 // Ensure that the current token is TK_NUM.
@@ -103,13 +103,13 @@ Token *tokenize() {
     //Multi-letter puctuator
     if (startswith(p, "==") || startswith(p, "!=") ||
         startswith(p, "<=") || startswith(p, ">=")){
-      cur = new_token(TK_RESERVED,cur,p,2);
+      cur = new_token(TK_RESERVED, cur, p, 2);
       p += 2;
       continue;
     }
 
     //Single-letter puctuator
-    if(strchr("+-*/()<>", *p)){
+    if (strchr("+-*/()<>", *p)){
       cur = new_token(TK_RESERVED, cur, p++, 1);
       continue;
     }
@@ -124,7 +124,7 @@ Token *tokenize() {
     }
     error_at(p, "invalid token");
   }
-  new_token(TK_EOF, cur, p,0);
+  new_token(TK_EOF, cur, p, 0);
   return head.next;
 }
 
@@ -189,10 +189,10 @@ Node *expr() {
 Node *equality(){
   Node *node = relational();
 
-  for(;;){
-    if(consume("=="))
+  for (;;){
+    if (consume("=="))
       node = new_binary(ND_EQ, node, relational());
-    else if(consume("!="))
+    else if (consume("!="))
       node = new_binary(ND_NE, node, relational());
     else
       return node;
@@ -209,9 +209,9 @@ Node *relational() {
     else if (consume("<="))
       node = new_binary(ND_LE, node, add());
     else if(consume(">"))
-      node = new_binary(ND_LT,add(),node);
+      node = new_binary(ND_LT, add(), node);
     else if(consume(">="))
-      node = new_binary(ND_LE,add(),node);
+      node = new_binary(ND_LE, add(), node);
     else
       return node;
   }
@@ -220,10 +220,10 @@ Node *relational() {
 Node *add(){
   Node *node = mul();
 
-  for(;;){
-    if(consume("+"))
+  for (;;){
+    if (consume("+"))
       node = new_binary(ND_ADD, node, mul());
-    else if(consume("-"))
+    else if (consume("-"))
       node = new_binary(ND_SUB, node, mul());
     else
       return node;
@@ -234,10 +234,10 @@ Node *add(){
 Node *mul(){
   Node *node = unary();
 
-  for(;;){
-    if(consume("*"))
+  for (;;){
+    if (consume("*"))
       node = new_binary(ND_MUL, node, unary());
-    else if("/")
+    else if(consume("/"))
       node = new_binary(ND_DIV, node, unary());
     else
       return node;
@@ -247,9 +247,9 @@ Node *mul(){
 // unary = ("+" | "-")? unary
 //       | primary
 Node *unary(){
-  if(consume("+"))
+  if (consume("+"))
     return unary();
-  if(consume("-"))
+  if (consume("-"))
     return new_binary(ND_SUB, new_num(0), unary());
   return primary();
 }
