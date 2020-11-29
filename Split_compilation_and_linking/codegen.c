@@ -61,7 +61,8 @@ static void gen_expr(Node *node){
     printf("  setle %%al\n");
   }
 
-  printf("invalid expression");
+  printf("  movzb %%al, %%rax\n");
+  return;
 }
 
 void codegen(Node *node){
